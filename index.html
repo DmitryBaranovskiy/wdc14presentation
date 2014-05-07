@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>WDC 2014</title>
+        <style media="all">
+            html, body {
+                height: 100%;
+            }
+            body {
+                background: #ccc;
+                margin: 0;
+                padding: 0;
+                text-rendering: optimizeLegibility;
+                -webkit-font-smoothing: antialiased;
+                -webkit-background-size: cover;
+                background-size: cover;
+            }
+            #screen,
+            #screen div {
+                background: #000 url(bg.jpg);
+                background-size: cover;
+                width: 100%;
+                height: 100%;
+            }
+            svg * { 
+                page-break-after: avoid;
+                page-break-before: avoid;
+            }
+            .title {
+/*                fill: #fff;*/
+                font: 600 60px "Brandon Text", "Source Sans Pro", "Helvetica Neue";
+                text-anchor: middle;
+            }
+            .text,
+            .link {
+                fill: #fff;
+                font: 300 36px "Brandon Text", "Source Sans Pro", "Helvetica Neue";
+                text-anchor: middle;
+            }
+            .code {
+                fill: #fff;
+                font: 300 24px "monofur", "menlo", monotype;
+                text-anchor: left;
+            }
+            .link {
+                fill: #23a2ee;
+                font-weight: 400;
+            }
+            .text-left {
+                fill: #fff;
+                font: 300 36px "Brandon Text", "Source Sans Pro", "Helvetica Neue";
+                text-anchor: start;
+            }
+            .name {
+                fill: #CDA869;
+            }
+            .attr {
+                fill: #7587A6;
+            }
+            .value {
+                fill: #8F9D6A;
+            }
+        </style>
+        <script src="snap.svg-min.js"></script>
+        <script src="preso.js"></script>
+        <script>
+            var cc = 0;
+            window.onload = function () {
+                var hash = document.location.hash.substring(1);
+                function setBlur(val) {
+                    blu.attr({
+                        stdDeviation: Math.round(val)
+                    });
+                }
+                function reveal(bg, el) {
+                    setBlur(20);
+                    el.attr({
+                        // blur: 10,
+                        filter: fil,
+                        opacity: 0,
+                        // transform: "t0-130"
+                    });
+                    Snap.animate(20, 0, setBlur, 500);
+                    el.animate({
+                        // blur: 0,
+                        opacity: 1,
+                        // transform: "t0,0"
+                    }, 500);
+                    back.animate({fill: bg || "#000"}, 500);
+                }
+                function kill(el) {
+                    Snap.animate(0, 20, setBlur, 500);
+                    el.stop().animate({
+                        // blur: 10,
+                        opacity: 0,
+                        // transform: "t0,130"
+                    }, 500, function () {
+                        el.remove();
+                    });
+                }
+                function next(nid) {
+                    if (nid != null) {
+                        id = nid;
+                    }
+                    var timeout = 0;
+                    if (set) {
+                        kill(set);
+                        timeout = 500;
+                    }
+                    set = r.svg(0, 0, "100%", "100%");
+                    set.attr({
+                        textAnchor: "middle"
+                    });
+                    document.location.hash = id;
+                    eve.off("click");
+                    cc = 0;
+                    +id && set.text(400, 550, id).attr({
+                        fill: "#fff",
+                        font: "20px Source Sans Pro",
+                        "fill-opacity": .25
+                    });
+                    setTimeout(function () {
+                        reveal(slides[id++].call(set), set);
+                    }, timeout);
+                }
+                var r = Snap("#screen"),
+                    fil = r.filter(Snap.filter.blur),
+                    blu = fil.select("*"),
+                    id = 0,
+                    num = "",
+                    to,
+                    set;
+                r.kill = kill;
+                r.reveal = reveal;
+                document.onkeyup = function (e) {
+                    if (e.which > 47 && e.which < 58) {
+                        clearTimeout(to);
+                        num += String.fromCharCode(e.which);
+                        to = setTimeout(function () {
+                            next(num);
+                            num = "";
+                        }, 300);
+                    }
+                    if (e.keyIdentifier in {
+                        Right: 1,
+                        Down: 1,
+                        "U+0020": 1
+                    }) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        next();
+                    }
+                    if (e.keyIdentifier in {
+                        Left: 1,
+                        Up: 1
+                    }) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        id -= 2;
+                        next();
+                    }
+                };
+                document.onclick = function (e) {
+                    eve("click." + ++cc, e);
+                };
+                var back = r.rect(-1000, -10, 6, 6);
+                bgSetup(r, function () {
+                    hash && next(hash);
+                });
+                window.print = function () {
+                    var scr = document.getElementById("screen");
+                    for (var i = 0; i < slides.length; i++) {
+                        var r = Snap("100%", "98%");
+                        r.attr({
+                            viewBox: "0 0 800 600"
+                        });
+                        (function (i, r) {
+                            var rect = r.rect(-1000, -10, 6000, 620);
+                            bgSetup(r, function () {
+                                rect.attr({
+                                    fill: slides[i].call(r) || "#000"
+                                });
+                            });
+                        }(i, r));
+                    }
+                };
+            };
+        </script>
+    </head>
+    <body>
+        <svg id="screen" viewBox="0 0 800 600" width="100%" height="100%"></svg>
+    </body>
+</html>
