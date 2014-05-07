@@ -99,6 +99,16 @@
                         el.remove();
                     });
                 }
+                function init() {
+                    var g = this;
+                    g.text(400, 260, "You are about to view presentation").addClass("text");
+                    g.text(400, 300, "Use arrows (←→) to move between slides").addClass("text");
+                    g.text(400, 340, "and click to run inslide transition.").addClass("text");
+                    g.text(400, 370, "(You don’t know if there is a transition until you click)").addClass("text").attr({
+                        fontSize: 20
+                    });
+                    g.text(400, 420, "Press “→” to start.").addClass("text");
+                }
                 function next(nid) {
                     if (nid != null) {
                         id = nid;
@@ -121,7 +131,12 @@
                         "fill-opacity": .25
                     });
                     setTimeout(function () {
-                        reveal(slides[id++].call(set), set);
+                        if (id == -1) {
+                            reveal(init.call(set), set);
+                            id++;
+                        } else {
+                            reveal(slides[id++].call(set), set);
+                        }
                     }, timeout);
                 }
                 var r = Snap("#screen"),
@@ -166,7 +181,7 @@
                 };
                 var back = r.rect(-1000, -10, 6, 6);
                 bgSetup(r, function () {
-                    hash && next(hash);
+                    next(hash || -1);
                 });
                 window.print = function () {
                     var scr = document.getElementById("screen");
