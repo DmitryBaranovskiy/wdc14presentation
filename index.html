@@ -67,26 +67,25 @@
         <script>
             var cc = 0;
             window.onload = function () {
-                var hash = document.location.hash.substring(1);
+                var hash = document.location.hash.substring(1),
+                    slow;
                 function setBlur(val) {
                     blu.attr({
                         stdDeviation: Math.round(val)
                     });
                 }
                 function reveal(bg, el) {
-                    setBlur(20);
-                    el.attr({
-                        filter: fil,
-                        opacity: 0
-                    });
-                    Snap.animate(20, 0, setBlur, 500);
+                    !slow && setBlur(20);
+                    !slow && el.attr({filter: fil});
+                    el.attr({opacity: 0});
+                    !slow && Snap.animate(20, 0, setBlur, 500);
                     el.animate({
                         opacity: 1
                     }, 500);
-                    back.animate({fill: bg || "#000"}, 500);
+                    //back.animate({fill: bg || "#000"}, 500);
                 }
                 function kill(el) {
-                    Snap.animate(0, 20, setBlur, 500);
+                    !slow && Snap.animate(0, 20, setBlur, 500);
                     el.stop().animate({
                         opacity: 0
                     }, 500, function () {
@@ -175,6 +174,7 @@
                 };
                 var startx, dx;
                 document.ontouchstart = function (e) {
+                    slow = 1;
                     if (e.touches.length == 1) {
                         startx = e.touches[0].pageX;
                         e.preventDefault();
