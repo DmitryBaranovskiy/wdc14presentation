@@ -136,7 +136,7 @@ slides = [
             "class": "title",
             fill: color,
             fontWeight: 400,
-            fontSize: 20
+            fontSize: "20px"
         });
         var t = g.text(400, 250, ["Y","o","u don","’t know SV","G"]).addClass("title").attr({
                 font: '800 60px "Brandon Text", "Source Sans Pro", "Helvetica Neue"'
@@ -153,8 +153,9 @@ slides = [
         t.attr({
             textpath: p,
             fill: ptrn,
-            x: bb.width / 2
+            x: 0
         });
+        t.textPath.attr({startOffset: bb.width / 2});
         eve.once("click.2", function () {
             t.select("tspan:nth-child(2)").animate({
                 dx: -8
@@ -169,13 +170,13 @@ slides = [
         eve.once("click.1", function () {
             Snap.animate(0, 1, function (val) {
                 p.attr({d: "M" + [bb.x, 250] + "c" + [0, 160 * val, bb.width, -160 * val, bb.width, 0]});
-                t.attr({x: p.getTotalLength() / 2});
+                t.textPath.attr({startOffset: p.getTotalLength() / 2});
                 pt[1].attr({strokeWidth: 10 - 7 * val});
             }, 500, function () {
                 setTimeout(function () {
                     Snap.animate(1, 0, function (val) {
                         p.attr({d: "M" + [bb.x, 250] + "c" + [0, 160 * val, bb.width, -160 * val, bb.width, 0]});
-                        t.attr({x: p.getTotalLength() / 2});
+                        t.textPath.attr({startOffset: p.getTotalLength() / 2});
                         pt[1].attr({strokeWidth: 10 - 7 * val});
                     }, 500);
                 }, 300);
@@ -220,8 +221,8 @@ slides = [
                 });
                 parts[i].push(element);
             }
-            g.add(logo.transform("t275,175"));
-            
+            g.add(logo);
+            logo.transform("t275,175")
             i = 0;
 
             function showEach() {
@@ -281,10 +282,11 @@ slides = [
             p;
         Snap.load("path.svg", function (f) {
             group = f.select("g");
-            g.add(group.attr({
+            g.add(group);
+            group.attr({
                 transform: "t350,200",
                 fill: color
-            }));
+            });
             eve.once("click.1", function () {
                 p = g.select("#p");
                 group.animate({opacity: 0}, 1300);
@@ -556,13 +558,13 @@ slides = [
                 stroke: colors.red,
                 strokeWidth: 3
             }),
-            mask = g.g(g.rect(0, 0, "100%", "100%").attr({fill: "#fff"}),
-                t.use().attr({
+            mask = g.mask();
+            mask.add(g.rect(0, 0, "100%", "100%").attr({fill: "#fff"}));
+            mask.add(t.use().attr({
                     stroke: "#000",
-                    filter: g.filter(Snap.filter.blur(2)),
                     strokeWidth: 11
-                })),
-            r2 = g.rect(bb.x - 20, bb.y - 20, bb.w + 40, bb.h + 40, 10).attr({
+                }));
+            var r2 = g.rect(bb.x - 20, bb.y - 20, bb.w + 40, bb.h + 40, 10).attr({
                 fill: p2.pattern(0, 0, 10, 10),
                 filter: g.filter(Snap.filter.blur(2)),
                 mask: mask

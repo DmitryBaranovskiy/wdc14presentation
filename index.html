@@ -62,7 +62,7 @@
                 fill: #8F9D6A;
             }
         </style>
-        <script src="snap.svg-min.js"></script>
+        <script src="snap.svg.js"></script>
         <script src="preso.js"></script>
         <script>
             var cc = 0;
@@ -157,7 +157,7 @@
                             num = "";
                         }, 300);
                     }
-                    if (e.keyIdentifier in {
+                    if ((e.keyIdentifier || e.key) in {
                         Right: 1,
                         Down: 1,
                         "U+0020": 1
@@ -166,7 +166,7 @@
                         e.stopPropagation();
                         next();
                     }
-                    if (e.keyIdentifier in {
+                    if ((e.keyIdentifier || e.key) in {
                         Left: 1,
                         Up: 1
                     }) {
