@@ -196,6 +196,8 @@
                             next();
                         }
                         dx = startx = 0;
+                    } else {
+                        eve("click." + ++cc, e);
                     }
                 };
                 var back = r.rect(-1000, -10, 6, 6);
