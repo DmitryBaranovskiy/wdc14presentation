@@ -189,7 +189,7 @@
                 document.ontouchend = function (e) {
                     if (startx && Math.abs(dx) > 15) {
                         e.preventDefault();
-                        if (dx > 0) {
+                        if (dx < 0) {
                             next();
                         } else {
                             id -= 2;
