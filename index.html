@@ -76,25 +76,19 @@
                 function reveal(bg, el) {
                     setBlur(20);
                     el.attr({
-                        // blur: 10,
                         filter: fil,
-                        opacity: 0,
-                        // transform: "t0-130"
+                        opacity: 0
                     });
                     Snap.animate(20, 0, setBlur, 500);
                     el.animate({
-                        // blur: 0,
-                        opacity: 1,
-                        // transform: "t0,0"
+                        opacity: 1
                     }, 500);
                     back.animate({fill: bg || "#000"}, 500);
                 }
                 function kill(el) {
                     Snap.animate(0, 20, setBlur, 500);
                     el.stop().animate({
-                        // blur: 10,
-                        opacity: 0,
-                        // transform: "t0,130"
+                        opacity: 0
                     }, 500, function () {
                         el.remove();
                     });
@@ -178,6 +172,30 @@
                 };
                 document.onclick = function (e) {
                     eve("click." + ++cc, e);
+                };
+                var startx, dx;
+                document.ontouchstart = function (e) {
+                    if (e.touches.length == 1) {
+                        startx = e.touches[0].pageX;
+                        e.preventDefault();
+                    }
+                };
+                document.ontouchmove = function (e) {
+                    if (startx) {
+                        dx = e.touches[0].pageX - startx;
+                        e.preventDefault();
+                    }
+                };
+                document.ontouchend = function (e) {
+                    if (startx && Math.abs(dx) > 15) {
+                        e.preventDefault();
+                        if (dx > 0) {
+                            next();
+                        } else {
+                            id -= 2;
+                            next();
+                        }
+                    }
                 };
                 var back = r.rect(-1000, -10, 6, 6);
                 bgSetup(r, function () {
